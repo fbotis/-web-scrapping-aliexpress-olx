@@ -1,5 +1,7 @@
 package ali;
 
+import ali.parser.CategoriesParser;
+import ali.parser.CategoryParser;
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.WebClient;
 import org.apache.commons.logging.LogFactory;
@@ -21,13 +23,12 @@ public class Main2 {
         java.util.logging.Logger.getLogger("org.apache.commons.httpclient").setLevel(Level.OFF);
         WebClient webClient = new WebClient(BrowserVersion.BEST_SUPPORTED);
         CategoriesParser p1 = new CategoriesParser(webClient, "http://www.aliexpress.com/all-wholesale-products.html");
-        p1.parse().subscribe(s -> {
-            thpool.execute(() -> {
-                CategoryParser p = new CategoryParser(new WebClient(BrowserVersion.BEST_SUPPORTED), s);
-                p.getProductUrls().subscribe(prurl -> {
-                    System.out.println(prurl);
-                });
-            });
-        });
+        p1.getCategories().subscribe(category ->
+                thpool.execute(() -> {
+                    if (category.getLevel() > 0) {
+                        CategoryParser p = new CategoryParser(new WebClient(BrowserVersion.BEST_SUPPORTED), category.getUrl());
+                        p.getProductUrls().subscribe(s -> System.out.println(s));
+                    }
+                }));
     }
 }

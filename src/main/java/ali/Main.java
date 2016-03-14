@@ -2,6 +2,7 @@ package ali;
 
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.html.HtmlInput;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import org.apache.commons.logging.LogFactory;
 
@@ -20,8 +21,9 @@ public class Main {
 
 
         try (final WebClient webClient = new WebClient(BrowserVersion.BEST_SUPPORTED)) {
-            webClient.addRequestHeader("Accept-Language", "en-US,en;q=0.8,en-GB;q=0.6");
-            final HtmlPage page = webClient.getPage("http://www.aliexpress.com/all-wholesale-products.html");
+            final HtmlPage page = webClient.getPage("http://olx.ro/adauga-anunt/");
+            ((HtmlInput)page.getElementById("add-title")).setValueAttribute("Colier cu medalion luna");
+
             page.getDocumentElement().getElementsByAttribute("ul", "class", "sub-item-cont util-clearfix").stream().
                     forEach(x -> {
                         x.getElementsByTagName("a").stream().forEach(a -> {
